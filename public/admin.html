@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<script src="js/theme-init.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — VaultShare</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/auth.css"/>
+<link rel="stylesheet" href="css/dashboard.css"/>
+<link rel="stylesheet" href="css/share.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  .admin-section-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  @media (max-width:600px){ .stat-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="orb2"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🔐</div>
+    Vault<span>Share</span>
+  </div>
+  <div class="badge">AES-256-GCM</div>
+  <button class="theme-toggle" id="theme-toggle-btn" onclick="cycleTheme()" aria-label="Toggle color theme" title="Toggle dark / light / system theme">🖥️ System</button>
+  <div id="user-bar-slot"></div>
+</header>
+
+<div class="dash-layout">
+  <aside class="sidebar">
+    <a class="side-link" href="dashboard.html"><span><span class="side-icon">🏠</span>Dashboard</span></a>
+    <a class="side-link" href="index.html"><span><span class="side-icon">🗄️</span>My Vault</span></a>
+    <a class="side-link" href="recycle-bin.html"><span><span class="side-icon">🗑️</span>Recycle Bin</span></a>
+    <a class="side-link" href="shared-with-me.html"><span><span class="side-icon">📥</span>Shared With Me</span></a>
+    <a class="side-link" href="my-shares.html"><span><span class="side-icon">📤</span>My Shares</span></a>
+    <a class="side-link" href="activity.html"><span><span class="side-icon">📜</span>Activity</span></a>
+    <a class="side-link" href="security.html"><span><span class="side-icon">🛡️</span>Security</span></a>
+    <a class="side-link" href="sessions.html"><span><span class="side-icon">💻</span>Sessions</span></a>
+    <a class="side-link" href="scan.html"><span><span class="side-icon">🔳</span>Scan QR</span></a>
+    <a class="side-link" href="settings.html"><span><span class="side-icon">⚙️</span>Settings</span></a>
+    <a class="side-link" href="analytics.html"><span><span class="side-icon">📊</span>Analytics</span></a>
+    <a class="side-link active" id="admin-nav-link" style="display:none" href="admin.html"><span><span class="side-icon">👑</span>Admin</span></a>
+    <div class="side-divider"></div>
+    <a class="side-link" href="profile.html"><span><span class="side-icon">👤</span>Profile</span></a>
+    <button class="side-link" id="sidebarLogout"><span><span class="side-icon">🚪</span>Logout</span></button>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-welcome">Admin Overview</div>
+    <div class="dash-sub">Read-only, platform-wide stats. Every number is a real query.</div>
+
+    <div class="admin-section-title">Platform Totals</div>
+    <div class="stat-grid" id="admin-stats">
+      <div class="empty-state">Loading…</div>
+    </div>
+
+    <div class="admin-section-title">Shares By Status</div>
+    <div class="card-title" style="margin:18px 0 10px;"><div class="dot"></div> System Health</div>
+    <div class="stat-grid" id="admin-health"></div>
+    <div style="font-size:.68rem;color:var(--muted);margin:6px 0 18px;">Admins see aggregate counts only. Files are encrypted in users' browsers and admins hold no keys, so admin access can never decrypt user files.</div>
+
+    <div class="stat-grid" id="admin-share-status">
+      <div class="empty-state">Loading…</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="dot"></div> Recent Security Events (All Users)</div>
+      <div class="activity-list" id="admin-events">
+        <div class="empty-state">Loading…</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer>VaultShare — All crypto runs in your browser. Open source. Zero telemetry.</footer>
+<div class="toast" id="toast"></div>
+
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

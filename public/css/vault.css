@@ -1,0 +1,90 @@
+/* ============================================================
+   VaultShare — vault.css
+   Feature 4: Personal Vault.
+   Only ADDS to style.css / auth.css — never overrides them.
+   ============================================================ */
+
+.empty-state {
+  color: var(--muted);
+  font-size: .8rem;
+  padding: 24px 4px;
+  text-align: center;
+}
+
+.vault-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.vault-row:last-child { border-bottom: none; }
+
+.vault-file-icon {
+  width: 34px; height: 34px; flex-shrink: 0;
+  border-radius: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+
+.vault-meta { flex: 1; min-width: 160px; }
+
+.vault-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: .85rem;
+  word-break: break-all;
+}
+
+.vault-sub {
+  color: var(--muted);
+  font-size: .7rem;
+  margin-top: 3px;
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+
+.vault-algo-badge {
+  font-size: .62rem;
+  padding: 2px 8px;
+  border-radius: 100px;
+  border: 1px solid rgba(0,229,255,.3);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.vault-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+.vault-actions button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  cursor: pointer;
+}
+
+.vault-actions button:hover { border-color: var(--accent); color: var(--accent); }
+.vault-actions button.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+.vault-hash {
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  color: var(--muted);
+  word-break: break-all;
+}
+
+/* VaultShare 3.0: favorites, tags */
+.vault-tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+.tag-chip {
+  font-size: .64rem; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1px 8px; color: var(--muted);
+}
+.tag-chip a { cursor: pointer; margin-left: 4px; color: var(--danger); text-decoration: none; }
+.tag-add-link { font-size: .64rem; color: var(--accent); cursor: pointer; }

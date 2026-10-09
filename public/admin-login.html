@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<script src="js/theme-init.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Login — VaultShare</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/auth.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  .admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,165,0,0.12);
+    border: 1px solid rgba(255,165,0,0.35);
+    color: #e6950a;
+    font-size: .72rem;
+    font-family: var(--font-mono);
+    letter-spacing: .05em;
+    padding: 3px 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+  }
+  .admin-notice {
+    font-size: .72rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="orb2"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🔐</div>
+    Vault<span>Share</span>
+  </div>
+  <div class="badge">AES-256-GCM</div>
+  <button class="theme-toggle" id="theme-toggle-btn" onclick="cycleTheme()" aria-label="Toggle color theme" title="Toggle dark / light / system theme">🖥️ System</button>
+</header>
+
+<main class="auth-main">
+  <div class="auth-wrap">
+    <div class="hero">
+      <h1>Admin <em>Login</em></h1>
+      <p>Restricted access. Authorized administrator only.</p>
+    </div>
+
+    <div class="card auth-card">
+      <div class="card-title"><div class="dot"></div> Administrator Login</div>
+      <div style="text-align:center;margin-bottom:14px;">
+        <span class="admin-badge">👑 Admin Portal</span>
+      </div>
+
+      <div id="auth-error" class="auth-alert" style="display:none;"></div>
+
+      <form id="adminLoginForm" novalidate autocomplete="off">
+        <div class="field">
+          <label for="email">Admin Email</label>
+          <input type="email" id="email" name="email" autocomplete="username" required/>
+        </div>
+
+        <div class="field">
+          <label for="password">Admin Password</label>
+          <div class="password-wrap">
+            <input type="password" id="password" name="password" autocomplete="current-password" required/>
+            <button type="button" class="eye-btn" data-toggle="password">👁</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="adminLoginBtn">Login as Admin</button>
+      </form>
+
+      <div class="admin-notice">
+        This page is for the system administrator only.<br/>
+        Regular users: <a href="/login.html">log in here</a>.
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>VaultShare — All crypto runs in your browser. Open source. Zero telemetry.</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ── Password visibility toggle
+document.querySelectorAll('.eye-btn[data-toggle]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const input = document.getElementById(btn.dataset.toggle);
+    if (!input) return;
+    input.type = input.type === 'password' ? 'text' : 'password';
+    btn.textContent = input.type === 'password' ? '👁' : '🙈';
+  });
+});
+
+function showError(messages) {
+  const box = document.getElementById('auth-error');
+  if (!box) return;
+  const arr = Array.isArray(messages) ? messages : [messages];
+  box.innerHTML = arr.map(m => `<div>${escHtml(m)}</div>`).join('');
+  box.style.display = 'block';
+}
+
+function hideError() {
+  const box = document.getElementById('auth-error');
+  if (box) box.style.display = 'none';
+}
+
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// Redirect if already authenticated as admin
+fetch('/api/admin/me')
+  .then(r => r.json())
+  .then(d => { if (d.ok && d.isAdmin) window.location.href = '/admin.html'; })
+  .catch(() => {});
+
+document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  hideError();
+
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const btn      = document.getElementById('adminLoginBtn');
+
+  if (!email) { showError(['Email is required.']); return; }
+  if (!password) { showError(['Password is required.']); return; }
+
+  btn.disabled    = true;
+  btn.textContent = 'Verifying…';
+
+  try {
+    const res  = await fetch('/api/admin/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+
+    if (!res.ok || !data.ok) {
+      showError(data.errors || ['Invalid admin credentials.']);
+      btn.disabled    = false;
+      btn.textContent = 'Login as Admin';
+      return;
+    }
+
+    window.location.href = '/admin.html';
+  } catch (err) {
+    showError(['Could not reach the server. Please try again.']);
+    btn.disabled    = false;
+    btn.textContent = 'Login as Admin';
+  }
+});
+</script>
+</body>
+</html>

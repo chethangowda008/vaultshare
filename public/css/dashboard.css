@@ -1,0 +1,196 @@
+/* ============================================================
+   VaultShare — dashboard.css
+   Feature 2: User Dashboard.
+   Only ADDS to style.css / auth.css — never overrides them.
+   ============================================================ */
+
+.dash-layout {
+  position: relative; z-index: 5;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  position: sticky;
+  top: 24px;
+}
+
+.side-link {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .8rem;
+  font-family: var(--font-mono);
+  margin-bottom: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.side-link .side-icon { margin-right: 8px; }
+
+.side-link:hover:not(.disabled), .side-link.active {
+  color: var(--text);
+  background: rgba(0,229,255,.06);
+  border-color: var(--border);
+}
+
+.side-link.active { color: var(--accent); border-color: var(--accent); }
+
+.side-link.disabled {
+  cursor: default;
+  opacity: .55;
+}
+
+.side-soon {
+  font-size: .58rem;
+  padding: 1px 6px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.side-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 4px;
+}
+
+/* ── DASH MAIN ── */
+.dash-main { min-width: 0; }
+
+.dash-welcome {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.6rem;
+  margin-bottom: 4px;
+}
+
+.dash-welcome span { color: var(--accent); }
+
+.dash-sub {
+  color: var(--muted);
+  font-size: .82rem;
+  margin-bottom: 24px;
+}
+
+/* ── STAT CARDS ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: .4;
+}
+
+.stat-label {
+  font-size: .68rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 10px;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2rem;
+  color: var(--text);
+}
+
+/* ── UPLOAD CTA ── */
+.upload-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  color: #05070a;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: .82rem;
+  text-decoration: none;
+  margin-bottom: 28px;
+}
+
+.upload-cta:hover { opacity: .9; }
+
+/* ── ACTIVITY LIST ── */
+.activity-list { display: flex; flex-direction: column; gap: 2px; }
+
+.activity-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--border);
+  font-size: .8rem;
+}
+
+.activity-row:last-child { border-bottom: none; }
+
+.activity-icon {
+  width: 22px; height: 22px; flex-shrink: 0;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .7rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+
+.activity-icon.warn { color: var(--warn); border-color: rgba(245,158,11,.4); }
+.activity-icon.ok   { color: var(--accent3); border-color: rgba(16,185,129,.4); }
+
+.activity-label { flex: 1; color: var(--text); }
+.activity-time   { color: var(--muted); font-size: .72rem; white-space: nowrap; }
+
+.empty-state {
+  color: var(--muted);
+  font-size: .8rem;
+  padding: 24px 4px;
+  text-align: center;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 860px) {
+  .dash-layout { grid-template-columns: 1fr; }
+  .sidebar {
+    position: static;
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .side-link { width: auto; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .stat-grid { grid-template-columns: 1fr; }
+}

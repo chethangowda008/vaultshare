@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<script src="js/theme-init.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Active Sessions — VaultShare</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/auth.css"/>
+<link rel="stylesheet" href="css/dashboard.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  .session-row {
+    display:flex; align-items:center; gap:14px; padding:14px; border:1px solid var(--border);
+    border-radius:10px; background:var(--surface); margin-bottom:10px;
+  }
+  .session-row .s-icon { font-size:1.4rem; }
+  .session-row .s-meta { flex:1; font-size:.8rem; }
+  .session-row .s-sub { color:var(--muted); font-size:.7rem; margin-top:2px; }
+  .current-badge { background:var(--accent3); color:#04231a; font-size:.62rem; font-weight:700; padding:2px 8px; border-radius:20px; margin-left:8px; }
+</style>
+</head>
+<body>
+<div class="orb2"></div>
+
+<header>
+  <div class="logo"><div class="logo-icon">🔐</div>Vault<span>Share</span></div>
+  <div class="badge">AES-256-GCM</div>
+  <button class="theme-toggle" id="theme-toggle-btn" onclick="cycleTheme()" aria-label="Toggle color theme" title="Toggle dark / light / system theme">🖥️ System</button>
+  <div id="user-bar-slot"></div>
+</header>
+
+<div class="dash-layout">
+  <aside class="sidebar">
+    <a class="side-link" href="dashboard.html"><span><span class="side-icon">🏠</span>Dashboard</span></a>
+    <a class="side-link" href="index.html"><span><span class="side-icon">🗄️</span>My Vault</span></a>
+    <a class="side-link" href="recycle-bin.html"><span><span class="side-icon">🗑️</span>Recycle Bin</span></a>
+    <a class="side-link" href="shared-with-me.html"><span><span class="side-icon">📥</span>Shared With Me</span></a>
+    <a class="side-link" href="my-shares.html"><span><span class="side-icon">📤</span>My Shares</span></a>
+    <a class="side-link" href="activity.html"><span><span class="side-icon">📜</span>Activity</span></a>
+    <a class="side-link" href="security.html"><span><span class="side-icon">🛡️</span>Security</span></a>
+    <a class="side-link active" href="sessions.html"><span><span class="side-icon">💻</span>Sessions</span></a>
+    <a class="side-link" href="scan.html"><span><span class="side-icon">🔳</span>Scan QR</span></a>
+    <a class="side-link" href="settings.html"><span><span class="side-icon">⚙️</span>Settings</span></a>
+    <a class="side-link" href="analytics.html"><span><span class="side-icon">📊</span>Analytics</span></a>
+    <a class="side-link" id="admin-nav-link" style="display:none" href="admin.html"><span><span class="side-icon">👑</span>Admin</span></a>
+    <a class="side-link" id="admin-users-nav-link" style="display:none" href="admin-users.html"><span><span class="side-icon">👥</span>Manage Users</span></a>
+    <a class="side-link" id="admin-audit-nav-link" style="display:none" href="admin-audit.html"><span><span class="side-icon">📈</span>Security Audit</span></a>
+    <div class="side-divider"></div>
+    <a class="side-link" href="profile.html"><span><span class="side-icon">👤</span>Profile</span></a>
+    <button class="side-link" id="sidebarLogout"><span><span class="side-icon">🚪</span>Logout</span></button>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-welcome">💻 Active Sessions</div>
+    <div class="dash-sub">Devices and browsers currently logged into your account.</div>
+
+    <div class="card">
+      <div class="card-title">
+        <div class="dot"></div> Sessions
+        <button class="copy-btn" style="margin-left:auto;" onclick="logoutOthers()">🚪 Log Out All Other Sessions</button>
+      </div>
+      <div id="session-list"><div class="empty-state">Loading…</div></div>
+    </div>
+  </main>
+</div>
+
+<footer>VaultShare — All crypto runs in your browser. Open source. Zero telemetry.</footer>
+<div class="toast" id="toast"></div>
+
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/sessions.js"></script>
+</body>
+</html>

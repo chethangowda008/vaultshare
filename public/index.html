@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<script src="js/theme-init.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VaultShare — Secure File Sharing</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/auth.css"/>
+<link rel="stylesheet" href="css/vault.css"/>
+<link rel="stylesheet" href="css/share.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="orb2"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🔐</div>
+    Vault<span>Share</span>
+  </div>
+  <div class="badge">AES-256-GCM</div>
+  <button class="theme-toggle" id="theme-toggle-btn" onclick="cycleTheme()" aria-label="Toggle color theme" title="Toggle dark / light / system theme">🖥️ System</button>
+  <nav>
+    <a class="nav-btn" href="dashboard.html" style="text-decoration:none;display:inline-block;">Dashboard</a>
+    <button class="nav-btn" onclick="switchTab('vault',this); loadVaultFiles();">My Vault</button>
+    <button class="nav-btn active" onclick="switchTab('encrypt',this)">Encrypt</button>
+    <button class="nav-btn" onclick="switchTab('decrypt',this)">Decrypt</button>
+    <button class="nav-btn" onclick="switchTab('verify',this)">Verify</button>
+    <button class="nav-btn" onclick="switchTab('about',this)">About</button>
+  </nav>
+  <div id="user-bar-slot"></div>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Military-Grade<br/><em>Encrypted</em> File Sharing</h1>
+    <p>Zero-knowledge encryption. Files never leave your browser unencrypted. AES-256-GCM with PBKDF2 key derivation.</p>
+    <div class="chips">
+      <span class="chip cyan">AES-256-GCM</span>
+      <span class="chip purple">PBKDF2 · 310K Iterations</span>
+      <span class="chip green">Client-Side Only</span>
+      <span class="chip">SHA-256 Integrity</span>
+    </div>
+  </div>
+
+  <!-- ENCRYPT PANEL -->
+  <div class="panel active" id="panel-encrypt">
+    <div class="card">
+      <div class="card-title"><div class="dot"></div> Select File to Encrypt</div>
+      <div class="dropzone" id="enc-drop"
+           ondragover="dzOver(event,'enc-drop')"
+           ondragleave="dzLeave('enc-drop')"
+           ondrop="dzDrop(event,'enc-drop','enc-file-input','enc-file-info','enc-file-name','enc-file-size')">
+        <input type="file" id="enc-file-input"
+               onchange="fileSelected('enc-file-input','enc-file-info','enc-file-name','enc-file-size','enc-drop')"/>
+        <div class="dz-icon">📂</div>
+        <div class="dz-label">Drop file here or click to browse</div>
+        <div class="dz-sub">Any file type · Max 500 MB</div>
+      </div>
+      <div class="file-info" id="enc-file-info">
+        <div class="file-icon">📄</div>
+        <div class="file-meta">
+          <div class="file-name" id="enc-file-name">—</div>
+          <div class="file-size" id="enc-file-size">—</div>
+        </div>
+        <button class="remove-btn" onclick="clearFile('enc-file-input','enc-file-info','enc-drop')">✕</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="dot"></div> Encryption Settings</div>
+      <div class="field">
+        <label>Algorithm</label>
+        <div class="algo-grid">
+          <div class="algo-card selected" id="alg-gcm" onclick="selectAlgo('gcm')">
+            <div class="algo-name">AES-256-GCM</div>
+            <div class="algo-desc">Authenticated</div>
+          </div>
+          <div class="algo-card" id="alg-cbc" onclick="selectAlgo('cbc')">
+            <div class="algo-name">AES-256-CBC</div>
+            <div class="algo-desc">Block cipher</div>
+          </div>
+          <div class="algo-card" id="alg-ctr" onclick="selectAlgo('ctr')">
+            <div class="algo-name">AES-256-CTR</div>
+            <div class="algo-desc">Stream mode</div>
+          </div>
+        </div>
+      </div>
+      <div class="row cols2">
+        <div class="field">
+          <label>Password</label>
+          <div class="password-wrap">
+            <input type="password" id="enc-pass" placeholder="Enter a strong password" oninput="updateStrength(this.value)"/>
+            <button class="eye-btn" onclick="toggleEye('enc-pass',this)">👁</button>
+          </div>
+          <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+          <div class="strength-label" id="strength-label">—</div>
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+          <div class="password-wrap">
+            <input type="password" id="enc-pass2" placeholder="Repeat password"/>
+            <button class="eye-btn" onclick="toggleEye('enc-pass2',this)">👁</button>
+          </div>
+        </div>
+      </div>
+      <div class="row cols2">
+        <div class="field">
+          <label>KDF Iterations</label>
+          <select id="kdf-iter">
+            <option value="100000">100,000 (Fast)</option>
+            <option value="310000" selected>310,000 (Recommended)</option>
+            <option value="600000">600,000 (Strong)</option>
+            <option value="1000000">1,000,000 (Very Strong)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Salt Length</label>
+          <select id="salt-len">
+            <option value="16">128-bit</option>
+            <option value="32" selected>256-bit</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Output Filename (optional)</label>
+        <input type="text" id="out-name" placeholder="e.g. secret-document"/>
+      </div>
+      <div class="field">
+        <div class="check-group">
+          <input type="checkbox" id="include-hash" checked/>
+          <span>Embed SHA-256 integrity hash in encrypted package</span>
+        </div>
+      </div>
+      <div class="info-row">ℹ️ All encryption runs in your browser. No data is sent to any server.</div>
+    </div>
+
+    <button class="btn btn-primary" id="enc-btn" onclick="encryptFile()">🔒 Encrypt File</button>
+    <div class="progress-wrap" id="enc-progress">
+      <div class="progress-bar"><div class="progress-fill" id="enc-prog-fill"></div></div>
+      <div class="progress-label" id="enc-prog-label">Deriving key…</div>
+    </div>
+    <div class="result-box" id="enc-result">
+      <div class="result-header success">✅ Encryption Complete</div>
+      <div class="result-meta" id="enc-meta"></div>
+      <div style="margin-bottom:8px;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">SHA-256 Hash</div>
+      <div class="hash-display" id="enc-hash">—</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+        <button class="dl-btn" id="enc-dl-btn">⬇ Download Encrypted File</button>
+        <button class="copy-btn" onclick="copyHash('enc-hash')">📋 Copy Hash</button>
+        <button class="copy-btn" id="enc-vault-btn" onclick="saveToVault()">💾 Save to Vault</button>
+      </div>
+    </div>
+    <div class="result-box error" id="enc-error">
+      <div class="result-header error">❌ Encryption Failed</div>
+      <div id="enc-error-msg" style="font-size:.82rem;color:var(--muted);"></div>
+    </div>
+  </div>
+
+  <!-- VAULT PANEL -->
+  <div class="panel" id="panel-vault">
+    <div class="card">
+      <div class="card-title">
+        <div class="dot"></div> My Vault
+        <button class="copy-btn" style="margin-left:auto;" onclick="openShareModalMulti()">🔗 Share Selected</button>
+        <button class="copy-btn" onclick="loadVaultFiles()">🔄 Refresh</button>
+      </div>
+      <div id="quota-meter" style="margin-bottom:12px;"></div>
+      <div id="vault-list">
+        <div class="empty-state">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DECRYPT PANEL -->
+  <div class="panel" id="panel-decrypt">
+    <div class="card purple">
+      <div class="card-title"><div class="dot purple"></div> Select Encrypted File</div>
+      <div class="dropzone purple-zone" id="dec-drop"
+           ondragover="dzOver(event,'dec-drop')"
+           ondragleave="dzLeave('dec-drop')"
+           ondrop="dzDrop(event,'dec-drop','dec-file-input','dec-file-info','dec-file-name','dec-file-size')">
+        <input type="file" id="dec-file-input" accept=".vaultenc"
+               onchange="fileSelected('dec-file-input','dec-file-info','dec-file-name','dec-file-size','dec-drop')"/>
+        <div class="dz-icon">🔐</div>
+        <div class="dz-label">Drop .vaultenc file here or click to browse</div>
+        <div class="dz-sub">Only VaultShare encrypted files (.vaultenc)</div>
+      </div>
+      <div class="file-info" id="dec-file-info">
+        <div class="file-icon">🔒</div>
+        <div class="file-meta">
+          <div class="file-name" id="dec-file-name">—</div>
+          <div class="file-size" id="dec-file-size">—</div>
+        </div>
+        <button class="remove-btn" onclick="clearFile('dec-file-input','dec-file-info','dec-drop')">✕</button>
+      </div>
+    </div>
+    <div class="card purple">
+      <div class="card-title"><div class="dot purple"></div> Decryption Credentials</div>
+      <div class="field">
+        <label>Password</label>
+        <div class="password-wrap">
+          <input type="password" id="dec-pass" placeholder="Enter decryption password"/>
+          <button class="eye-btn" onclick="toggleEye('dec-pass',this)">👁</button>
+        </div>
+      </div>
+      <div class="check-group">
+        <input type="checkbox" id="verify-hash" checked/>
+        <span>Verify SHA-256 integrity hash after decryption</span>
+      </div>
+    </div>
+    <button class="btn btn-purple" id="dec-btn" onclick="decryptFile()">🔓 Decrypt File</button>
+    <div class="progress-wrap" id="dec-progress">
+      <div class="progress-bar"><div class="progress-fill" id="dec-prog-fill"></div></div>
+      <div class="progress-label" id="dec-prog-label">Deriving key…</div>
+    </div>
+    <div class="result-box" id="dec-result">
+      <div class="result-header success">✅ Decryption Successful</div>
+      <div class="result-meta" id="dec-meta"></div>
+      <div style="margin-bottom:8px;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">SHA-256 Hash (verified)</div>
+      <div class="hash-display purple" id="dec-hash">—</div>
+      <button class="dl-btn" id="dec-dl-btn">⬇ Download Decrypted File</button>
+    </div>
+    <div class="result-box error" id="dec-error">
+      <div class="result-header error">❌ Decryption Failed</div>
+      <div id="dec-error-msg" style="font-size:.82rem;color:var(--muted);"></div>
+    </div>
+  </div>
+
+  <!-- VERIFY PANEL -->
+  <div class="panel" id="panel-verify">
+    <div class="card green">
+      <div class="card-title"><div class="dot green"></div> File Integrity Verification</div>
+      <div class="dropzone" id="ver-drop"
+           ondragover="dzOver(event,'ver-drop')"
+           ondragleave="dzLeave('ver-drop')"
+           ondrop="dzDrop(event,'ver-drop','ver-file-input','ver-file-info','ver-file-name','ver-file-size')">
+        <input type="file" id="ver-file-input"
+               onchange="fileSelected('ver-file-input','ver-file-info','ver-file-name','ver-file-size','ver-drop'); computeHash();"/>
+        <div class="dz-icon">🔍</div>
+        <div class="dz-label">Drop any file to compute its SHA-256 hash</div>
+        <div class="dz-sub">Verify file integrity after encryption / decryption</div>
+      </div>
+      <div class="file-info" id="ver-file-info">
+        <div class="file-icon">📄</div>
+        <div class="file-meta">
+          <div class="file-name" id="ver-file-name">—</div>
+          <div class="file-size" id="ver-file-size">—</div>
+        </div>
+        <button class="remove-btn" onclick="clearFile('ver-file-input','ver-file-info','ver-drop');clearVerify()">✕</button>
+      </div>
+    </div>
+    <div class="card green">
+      <div class="card-title"><div class="dot green"></div> Compare Hash</div>
+      <div class="field">
+        <label>Known/Expected SHA-256 Hash (optional)</label>
+        <input type="text" id="expected-hash" placeholder="Paste SHA-256 hash to compare…" oninput="compareHashes()"/>
+      </div>
+    </div>
+    <button class="btn btn-green" onclick="computeHash()">🔍 Compute SHA-256</button>
+    <div class="result-box" id="ver-result">
+      <div class="result-header success" id="ver-status-label">🔍 Hash Computed</div>
+      <div style="margin-bottom:8px;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">SHA-256</div>
+      <div class="hash-display" id="ver-hash" style="color:var(--accent3);background:rgba(16,185,129,.05);border-color:rgba(16,185,129,.2)">—</div>
+      <div id="ver-compare-result" style="font-size:.82rem;margin-top:8px;"></div>
+      <button class="copy-btn" style="margin-top:8px" onclick="copyHash('ver-hash')">📋 Copy Hash</button>
+    </div>
+  </div>
+
+  <!-- ABOUT PANEL -->
+  <div class="panel" id="panel-about">
+    <div class="sec-title">🛡 Security Architecture</div>
+    <div class="about-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔑</div>
+        <div class="feature-title">AES-256 Encryption</div>
+        <div class="feature-desc">Uses AES with 256-bit keys in GCM, CBC, or CTR mode. GCM provides authenticated encryption to detect tampering.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧂</div>
+        <div class="feature-title">PBKDF2 Key Derivation</div>
+        <div class="feature-desc">Password is never used directly. PBKDF2-SHA256 with up to 1M iterations and a random 256-bit salt.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎲</div>
+        <div class="feature-title">Random IV Per File</div>
+        <div class="feature-desc">A fresh cryptographically random IV is generated for every encryption operation.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔏</div>
+        <div class="feature-title">Integrity Verification</div>
+        <div class="feature-desc">SHA-256 hash of original plaintext embedded and verified on decryption.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <div class="feature-title">Zero Server Contact</div>
+        <div class="feature-desc">All operations use the browser's native Web Crypto API. Nothing leaves your device unencrypted.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <div class="feature-title">Self-Describing Package</div>
+        <div class="feature-desc">Output carries a structured header: version, algorithm, salt, IV, original filename, and hash.</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>VaultShare — All crypto runs in your browser. Open source. Zero telemetry.</footer>
+<div class="toast" id="toast"></div>
+
+<!-- SHARE MODAL (Feature 5) -->
+<div class="modal-overlay" id="share-modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeShareModal()">✕</button>
+    <div class="modal-title">Share Securely</div>
+    <div class="modal-sub" id="share-modal-filename">—</div>
+
+    <div id="share-form">
+      <div class="field">
+        <label>Recipient (email — optional)</label>
+        <input type="text" id="share-recipient" placeholder="user@example.com"/>
+      </div>
+      <div class="row cols2">
+        <div class="field">
+          <label>Expiration</label>
+          <select id="share-expires">
+            <option value="1h">1 Hour</option>
+            <option value="24h" selected>24 Hours</option>
+            <option value="7d">7 Days</option>
+            <option value="30d">30 Days</option>
+            <option value="custom">Custom…</option>
+            <option value="never">Never</option>
+          </select>
+          <input type="number" id="share-custom-hours" min="1" max="8760" placeholder="Hours (1–8760)" style="display:none;margin-top:6px;"/>
+        </div>
+        <div class="field">
+          <label>Download Limit</label>
+          <select id="share-limit">
+            <option value="1">1</option>
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="unlimited">Unlimited</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Password Protection (optional)</label>
+        <input type="password" id="share-password" placeholder="Require a password to download"/>
+      </div>
+      <button class="btn btn-purple" id="share-generate-btn" onclick="submitShare()">Generate Secure Share</button>
+    </div>
+
+    <div id="share-result" style="display:none;">
+      <div style="font-size:.78rem;color:var(--accent3);margin-bottom:4px;">✓ Share Active</div>
+      <div class="share-link-box">
+        <input type="text" id="share-result-link" readonly/>
+        <button class="copy-btn" onclick="copyShareLink()">📋 Copy</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="copy-btn" onclick="generateShareQr()">🔳 Generate QR</button>
+        <a class="copy-btn" id="share-qr-download" style="display:none;text-decoration:none;" download="vaultshare-qr.png">⬇ Download QR</a>
+      </div>
+      <div style="text-align:center;margin-top:12px;">
+        <img id="share-qr-img" style="display:none;max-width:180px;border-radius:8px;border:1px solid var(--border);"/>
+        <div id="share-qr-caption" style="display:none;font-size:.68rem;color:var(--muted);margin-top:6px;">Scan to access this secure file</div>
+      </div>
+      <div id="share-result-note" style="font-size:.72rem;color:var(--muted);margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FILE PREVIEW MODAL (decrypts in the browser; server never sees plaintext) -->
+<div class="modal-overlay" id="preview-modal-overlay">
+  <div class="modal-box" style="max-width:820px;width:95%;">
+    <button class="modal-close" onclick="closePreviewModal()">✕</button>
+    <div class="modal-title">Preview</div>
+    <div class="modal-sub" id="preview-filename">—</div>
+    <div id="preview-pass-row" class="field" style="margin-top:12px;">
+      <label>Encryption password for this file</label>
+      <input type="password" id="preview-password" placeholder="Enter the file's password"/>
+      <button class="btn btn-primary" style="margin-top:8px;" id="preview-btn" onclick="runPreview()">🔓 Decrypt &amp; Preview</button>
+    </div>
+    <div id="preview-error" style="color:#e55;font-size:.78rem;margin-top:8px;display:none;"></div>
+    <div id="preview-body" style="margin-top:12px;max-height:60vh;overflow:auto;"></div>
+    <div style="font-size:.66rem;color:var(--muted);margin-top:8px;">Decryption happens in your browser. Supported: images, PDF, text, CSV.</div>
+  </div>
+</div>
+
+<!-- VERSION HISTORY MODAL (Feature: File Version History) -->
+<div class="modal-overlay" id="version-modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeVersionModal()">✕</button>
+    <div class="modal-title">Version History</div>
+    <div class="modal-sub" id="version-modal-filename">—</div>
+
+    <div class="field" style="margin-top:14px;">
+      <label>Upload a new version</label>
+      <input type="file" id="version-file-input"/>
+    </div>
+    <div class="field">
+      <label>Encryption password for this version</label>
+      <input type="password" id="version-password" placeholder="Password used to encrypt this version"/>
+    </div>
+    <button class="btn btn-primary" id="version-upload-btn" onclick="uploadNewVersion()">⬆ Upload as New Version</button>
+
+    <div style="margin-top:18px;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">History</div>
+    <div id="version-list" style="margin-top:8px;"><div class="empty-state">Loading…</div></div>
+  </div>
+</div>
+
+<script src="js/crypto.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+<script src="js/vault.js"></script>
+<script src="js/versions.js"></script>
+<script src="js/preview.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

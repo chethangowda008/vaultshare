@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<script src="js/theme-init.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Manage Users — VaultShare</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/auth.css"/>
+<link rel="stylesheet" href="css/dashboard.css"/>
+<link rel="stylesheet" href="css/vault.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  table.users-table { width:100%; border-collapse:collapse; font-size:.78rem; }
+  table.users-table th, table.users-table td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--border); }
+  table.users-table th { color:var(--muted); font-weight:600; text-transform:uppercase; font-size:.66rem; }
+  .pill { font-size:.64rem; padding:2px 8px; border-radius:20px; border:1px solid var(--border); }
+  .pill.active { color:var(--accent3); border-color:var(--accent3); }
+  .pill.suspended { color:var(--danger); border-color:var(--danger); }
+  .quota-bar { width:80px; height:6px; background:var(--border); border-radius:4px; overflow:hidden; display:inline-block; vertical-align:middle; margin-right:6px; }
+  .quota-fill { height:100%; background:var(--accent); }
+</style>
+</head>
+<body>
+<div class="orb2"></div>
+
+<header>
+  <div class="logo"><div class="logo-icon">🔐</div>Vault<span>Share</span></div>
+  <div class="badge">AES-256-GCM</div>
+  <button class="theme-toggle" id="theme-toggle-btn" onclick="cycleTheme()" aria-label="Toggle color theme" title="Toggle dark / light / system theme">🖥️ System</button>
+  <div id="user-bar-slot"></div>
+</header>
+
+<div class="dash-layout">
+  <aside class="sidebar">
+    <a class="side-link" href="dashboard.html"><span><span class="side-icon">🏠</span>Dashboard</span></a>
+    <a class="side-link" href="index.html"><span><span class="side-icon">🗄️</span>My Vault</span></a>
+    <a class="side-link" href="recycle-bin.html"><span><span class="side-icon">🗑️</span>Recycle Bin</span></a>
+    <a class="side-link" href="shared-with-me.html"><span><span class="side-icon">📥</span>Shared With Me</span></a>
+    <a class="side-link" href="my-shares.html"><span><span class="side-icon">📤</span>My Shares</span></a>
+    <a class="side-link" href="activity.html"><span><span class="side-icon">📜</span>Activity</span></a>
+    <a class="side-link" href="security.html"><span><span class="side-icon">🛡️</span>Security</span></a>
+    <a class="side-link" href="sessions.html"><span><span class="side-icon">💻</span>Sessions</span></a>
+    <a class="side-link" href="scan.html"><span><span class="side-icon">🔳</span>Scan QR</span></a>
+    <a class="side-link" href="settings.html"><span><span class="side-icon">⚙️</span>Settings</span></a>
+    <a class="side-link" href="analytics.html"><span><span class="side-icon">📊</span>Analytics</span></a>
+    <a class="side-link" id="admin-nav-link" style="display:none" href="admin.html"><span><span class="side-icon">👑</span>Admin</span></a>
+    <a class="side-link active" id="admin-users-nav-link" style="display:none" href="admin-users.html"><span><span class="side-icon">👥</span>Manage Users</span></a>
+    <div class="side-divider"></div>
+    <a class="side-link" href="profile.html"><span><span class="side-icon">👤</span>Profile</span></a>
+    <button class="side-link" id="sidebarLogout"><span><span class="side-icon">🚪</span>Logout</span></button>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-welcome">👥 Manage Users</div>
+    <div class="dash-sub">Admin only. Admins can never see or decrypt a user's actual files — only these aggregate account details.</div>
+    <div class="card">
+      <div class="card-title"><div class="dot"></div> Default Storage Quota
+        <span style="margin-left:auto;display:flex;gap:6px;align-items:center;">
+          <input type="number" id="default-quota-mb" style="width:100px;" min="1"/> MB
+          <button class="copy-btn" onclick="saveDefaultQuota()">Save</button>
+        </span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="dot"></div> All Users</div>
+      <div style="overflow-x:auto;"><table class="users-table" id="users-table"><tbody><tr><td>Loading…</td></tr></tbody></table></div>
+    </div>
+  </main>
+</div>
+
+<footer>VaultShare — All crypto runs in your browser. Open source. Zero telemetry.</footer>
+<div class="toast" id="toast"></div>
+
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/admin-users.js"></script>
+</body>
+</html>

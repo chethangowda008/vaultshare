@@ -1,0 +1,82 @@
+/* ============================================================
+   VaultShare — auth.css
+   Additional styles for login.html / register.html and for the
+   logged-in user bar injected into index.html.
+   This file only ADDS to style.css — it never overrides it.
+   ============================================================ */
+
+/* email inputs use the same look as the existing text/password inputs */
+input[type=email] {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: .82rem;
+  outline: none;
+  transition: border-color .2s;
+}
+input[type=email]:focus { border-color: var(--accent); }
+
+/* ── AUTH PAGE LAYOUT ── */
+.auth-main {
+  display: flex;
+  justify-content: center;
+  padding-top: 60px;
+}
+
+.auth-wrap { width: 100%; max-width: 420px; }
+
+.auth-card { padding: 32px; }
+
+.auth-switch {
+  text-align: center;
+  margin-top: 16px;
+  font-size: .78rem;
+  color: var(--muted);
+}
+
+.auth-switch a { color: var(--accent); text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }
+
+.auth-alert {
+  background: #1f0808;
+  border: 1px solid rgba(239,68,68,.4);
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: .78rem;
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+/* ── LOGGED-IN USER BAR (injected into index.html header) ── */
+.user-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: .78rem;
+  color: var(--muted);
+}
+
+.user-bar .user-name {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.user-bar .logout-link {
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+}
+
+.user-bar .logout-link:hover { border-color: var(--accent); }

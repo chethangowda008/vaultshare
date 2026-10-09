@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<script src="js/theme-init.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Security — VaultShare</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/auth.css"/>
+<link rel="stylesheet" href="css/dashboard.css"/>
+<link rel="stylesheet" href="css/share.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  .sec-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:24px; }
+  .sec-item {
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:12px 14px; font-size:.78rem;
+  }
+  .sec-item .name { font-family:var(--font-display); font-weight:700; }
+  .sec-item .detail { color:var(--muted); font-size:.68rem; margin-top:2px; }
+  .sec-check { color:var(--accent3); font-weight:700; }
+  .sec-counts { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+  @media (max-width:600px){ .sec-grid, .sec-counts { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="orb2"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🔐</div>
+    Vault<span>Share</span>
+  </div>
+  <div class="badge">AES-256-GCM</div>
+  <button class="theme-toggle" id="theme-toggle-btn" onclick="cycleTheme()" aria-label="Toggle color theme" title="Toggle dark / light / system theme">🖥️ System</button>
+  <div id="user-bar-slot"></div>
+</header>
+
+<div class="dash-layout">
+  <aside class="sidebar">
+    <a class="side-link" href="dashboard.html"><span><span class="side-icon">🏠</span>Dashboard</span></a>
+    <a class="side-link" href="index.html"><span><span class="side-icon">🗄️</span>My Vault</span></a>
+    <a class="side-link" href="recycle-bin.html"><span><span class="side-icon">🗑️</span>Recycle Bin</span></a>
+    <a class="side-link" href="shared-with-me.html"><span><span class="side-icon">📥</span>Shared With Me</span></a>
+    <a class="side-link" href="my-shares.html"><span><span class="side-icon">📤</span>My Shares</span></a>
+    <a class="side-link" href="activity.html"><span><span class="side-icon">📜</span>Activity</span></a>
+    <a class="side-link active" href="security.html"><span><span class="side-icon">🛡️</span>Security</span></a>
+    <a class="side-link" href="sessions.html"><span><span class="side-icon">💻</span>Sessions</span></a>
+    <a class="side-link" href="scan.html"><span><span class="side-icon">🔳</span>Scan QR</span></a>
+    <a class="side-link" href="settings.html"><span><span class="side-icon">⚙️</span>Settings</span></a>
+    <a class="side-link" href="analytics.html"><span><span class="side-icon">📊</span>Analytics</span></a>
+    <a class="side-link" id="admin-nav-link" style="display:none" href="admin.html"><span><span class="side-icon">👑</span>Admin</span></a>
+    <a class="side-link" id="admin-users-nav-link" style="display:none" href="admin-users.html"><span><span class="side-icon">👥</span>Manage Users</span></a>
+    <a class="side-link" id="admin-audit-nav-link" style="display:none" href="admin-audit.html"><span><span class="side-icon">📈</span>Security Audit</span></a>
+    <div class="side-divider"></div>
+    <a class="side-link" href="profile.html"><span><span class="side-icon">👤</span>Profile</span></a>
+    <button class="side-link" id="sidebarLogout"><span><span class="side-icon">🚪</span>Logout</span></button>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-welcome">Security Overview</div>
+    <div class="dash-sub">What's actually implemented, plus real numbers from your account.</div>
+
+    <div class="sec-grid" id="sec-capabilities">
+      <div class="empty-state">Loading…</div>
+    </div>
+
+    <div id="sec-alert" class="auth-alert" style="display:none;margin-bottom:16px;">
+      <b>SECURITY ALERT</b> — <span id="sec-alert-text"></span>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <a class="copy-btn" style="text-decoration:none;" href="sessions.html">Review Sessions</a>
+        <a class="copy-btn" style="text-decoration:none;" href="profile.html">Secure Account</a>
+      </div>
+    </div>
+
+    <div class="card" id="score-card">
+      <div class="card-title"><div class="dot"></div> Security Score <span id="score-total" style="margin-left:auto;font-family:var(--font-display);font-weight:800;"></span></div>
+      <div id="score-breakdown"><div class="empty-state">Loading…</div></div>
+    </div>
+
+    <div class="sec-counts" id="sec-counts"></div>
+
+    <div class="card">
+      <div class="card-title"><div class="dot"></div> Recent Logins</div>
+      <div id="login-history"><div class="empty-state">Loading…</div></div>
+      <div style="font-size:.66rem;color:var(--muted);margin-top:8px;">Detection uses simple, transparent rules (new device, new network, repeated failures, rapid logins, many sessions, unusual hour). It does not use AI and does not determine physical location.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="dot"></div> Recent Security Events</div>
+      <div class="activity-list" id="sec-events">
+        <div class="empty-state">Loading…</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer>VaultShare — All crypto runs in your browser. Open source. Zero telemetry.</footer>
+<div class="toast" id="toast"></div>
+
+<script src="js/auth.js"></script>
+<script src="js/security.js"></script>
+</body>
+</html>

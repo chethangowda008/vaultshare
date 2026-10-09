@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<script src="js/theme-init.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Create Account — VaultShare</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/auth.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="orb2"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🔐</div>
+    Vault<span>Share</span>
+  </div>
+  <div class="badge">AES-256-GCM</div>
+  <button class="theme-toggle" id="theme-toggle-btn" onclick="cycleTheme()" aria-label="Toggle color theme" title="Toggle dark / light / system theme">🖥️ System</button>
+</header>
+
+<main class="auth-main">
+  <div class="auth-wrap">
+    <div class="hero">
+      <h1>Create Your <em>Vault</em></h1>
+      <p>Register to start securely encrypting and sharing files.</p>
+    </div>
+
+    <div class="card auth-card">
+      <div class="card-title"><div class="dot"></div> Create Account</div>
+
+      <div id="auth-error" class="auth-alert" style="display:none;"></div>
+
+      <form id="registerForm" novalidate>
+        <div class="field">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" autocomplete="name" required/>
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" autocomplete="email" required/>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input type="password" id="password" name="password" autocomplete="new-password" required/>
+            <button type="button" class="eye-btn" data-toggle="password">👁</button>
+          </div>
+          <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+          <div class="strength-label" id="strength-label">At least 8 characters, with a letter and a number</div>
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="password-wrap">
+            <input type="password" id="confirmPassword" name="confirmPassword" autocomplete="new-password" required/>
+            <button type="button" class="eye-btn" data-toggle="confirmPassword">👁</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="registerBtn">Create Account</button>
+      </form>
+
+      <div class="auth-switch">
+        Already have an account? <a href="login.html">Log in</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>VaultShare — All crypto runs in your browser. Open source. Zero telemetry.</footer>
+<div class="toast" id="toast"></div>
+
+<script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+/* ============================================================
+   VaultShare — share.css
+   Feature 5: Secure File Sharing.
+   Only ADDS to style.css / auth.css / vault.css — never overrides.
+   ============================================================ */
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(5,5,10,.75);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-overlay.show { display: flex; }
+
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  background: none; border: none;
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: pointer;
+}
+.modal-close:hover { color: var(--text); }
+
+.modal-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.modal-sub {
+  font-size: .78rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+  word-break: break-all;
+}
+
+/* ── SHARE RESULT (link + copy) ── */
+.share-link-box {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+
+.share-link-box input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  outline: none;
+}
+
+/* ── SHARE / RECEIVED TABLES ── */
+.share-table-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  font-size: .8rem;
+}
+.share-table-row:last-child { border-bottom: none; }
+
+.share-file { flex: 1; min-width: 160px; }
+.share-file .name { font-family: var(--font-display); font-weight: 700; }
+.share-file .sub  { color: var(--muted); font-size: .7rem; margin-top: 2px; }
+
+.status-badge {
+  font-size: .62rem;
+  padding: 3px 9px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  border: 1px solid var(--border);
+}
+.status-badge.active    { color: var(--accent3); border-color: rgba(16,185,129,.4); }
+.status-badge.expired   { color: var(--muted);   border-color: var(--border); }
+.status-badge.revoked   { color: var(--danger);  border-color: rgba(239,68,68,.4); }
+.status-badge.completed { color: var(--warn);    border-color: rgba(245,158,11,.4); }
+
+.share-table-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.share-table-actions button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  cursor: pointer;
+}
+.share-table-actions button:hover { border-color: var(--accent); color: var(--accent); }
+.share-table-actions button.danger:hover { border-color: var(--danger); color: var(--danger); }
+.share-table-actions button:disabled { opacity: .35; cursor: not-allowed; }
+
+/* ── PUBLIC SHARE PAGE ── */
+.share-page-wrap {
+  max-width: 460px;
+  margin: 80px auto;
+  padding: 0 20px;
+}
+
+.share-page-icon {
+  font-size: 2.4rem;
+  text-align: center;
+  margin-bottom: 8px;
+}

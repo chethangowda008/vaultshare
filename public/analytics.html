@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<script src="js/theme-init.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Analytics — VaultShare</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/auth.css"/>
+<link rel="stylesheet" href="css/dashboard.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  .chart-card svg { width:100%; height:180px; display:block; }
+  .chart-legend { font-size:.68rem; color:var(--muted); margin-top:6px; }
+  .type-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; font-size:.78rem; }
+  .type-bar-row .type-label { width:70px; flex-shrink:0; }
+  .type-bar-track { flex:1; height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+  .type-bar-fill { height:100%; background:var(--accent); }
+  .type-bar-count { width:70px; text-align:right; color:var(--muted); flex-shrink:0; }
+  .charts-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:800px){ .charts-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="orb2"></div>
+
+<header>
+  <div class="logo"><div class="logo-icon">🔐</div>Vault<span>Share</span></div>
+  <div class="badge">AES-256-GCM</div>
+  <button class="theme-toggle" id="theme-toggle-btn" onclick="cycleTheme()" aria-label="Toggle color theme" title="Toggle dark / light / system theme">🖥️ System</button>
+  <div id="user-bar-slot"></div>
+</header>
+
+<div class="dash-layout">
+  <aside class="sidebar">
+    <a class="side-link" href="dashboard.html"><span><span class="side-icon">🏠</span>Dashboard</span></a>
+    <a class="side-link" href="index.html"><span><span class="side-icon">🗄️</span>My Vault</span></a>
+    <a class="side-link" href="recycle-bin.html"><span><span class="side-icon">🗑️</span>Recycle Bin</span></a>
+    <a class="side-link" href="shared-with-me.html"><span><span class="side-icon">📥</span>Shared With Me</span></a>
+    <a class="side-link" href="my-shares.html"><span><span class="side-icon">📤</span>My Shares</span></a>
+    <a class="side-link" href="activity.html"><span><span class="side-icon">📜</span>Activity</span></a>
+    <a class="side-link" href="security.html"><span><span class="side-icon">🛡️</span>Security</span></a>
+    <a class="side-link" href="sessions.html"><span><span class="side-icon">💻</span>Sessions</span></a>
+    <a class="side-link" href="scan.html"><span><span class="side-icon">🔳</span>Scan QR</span></a>
+    <a class="side-link" href="settings.html"><span><span class="side-icon">⚙️</span>Settings</span></a>
+    <a class="side-link active" href="analytics.html"><span><span class="side-icon">📊</span>Analytics</span></a>
+    <a class="side-link" id="admin-nav-link" style="display:none" href="admin.html"><span><span class="side-icon">👑</span>Admin</span></a>
+    <a class="side-link" id="admin-users-nav-link" style="display:none" href="admin-users.html"><span><span class="side-icon">👥</span>Manage Users</span></a>
+    <a class="side-link" id="admin-audit-nav-link" style="display:none" href="admin-audit.html"><span><span class="side-icon">📈</span>Security Audit</span></a>
+    <div class="side-divider"></div>
+    <a class="side-link" href="profile.html"><span><span class="side-icon">👤</span>Profile</span></a>
+    <button class="side-link" id="sidebarLogout"><span><span class="side-icon">🚪</span>Logout</span></button>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-welcome">📊 Analytics</div>
+    <div class="dash-sub">Real numbers straight from your database — nothing here is simulated.</div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">Total Files</div><div class="stat-value" id="a-total-files">—</div></div>
+      <div class="stat-card"><div class="stat-label">Storage Used</div><div class="stat-value" id="a-storage">—</div></div>
+      <div class="stat-card"><div class="stat-label">Active Shares</div><div class="stat-value" id="a-active-shares">—</div></div>
+      <div class="stat-card"><div class="stat-label">Total Downloads</div><div class="stat-value" id="a-downloads">—</div></div>
+      <div class="stat-card"><div class="stat-label">In Recycle Bin</div><div class="stat-value" id="a-bin">—</div></div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="card chart-card">
+        <div class="card-title"><div class="dot"></div> Uploads per day (last 14 days)</div>
+        <svg id="chart-uploads" viewBox="0 0 400 180" preserveAspectRatio="none"></svg>
+      </div>
+      <div class="card chart-card">
+        <div class="card-title"><div class="dot"></div> Downloads per day (last 14 days)</div>
+        <svg id="chart-downloads" viewBox="0 0 400 180" preserveAspectRatio="none"></svg>
+      </div>
+      <div class="card chart-card">
+        <div class="card-title"><div class="dot"></div> Shares created per day</div>
+        <svg id="chart-shares" viewBox="0 0 400 180" preserveAspectRatio="none"></svg>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="dot"></div> File type distribution</div>
+        <div id="type-dist"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer>VaultShare — All crypto runs in your browser. Open source. Zero telemetry.</footer>
+<div class="toast" id="toast"></div>
+
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/analytics.js"></script>
+</body>
+</html>

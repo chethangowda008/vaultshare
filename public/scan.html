@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<script src="js/theme-init.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Scan QR — VaultShare</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/share.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  .scan-video-wrap { position:relative; width:100%; max-width:360px; margin:12px auto; border-radius:12px; overflow:hidden; background:#000; aspect-ratio:1/1; }
+  .scan-video-wrap video { width:100%; height:100%; object-fit:cover; }
+  .scan-frame { position:absolute; inset:18%; border:2px solid var(--accent3,#00e5b0); border-radius:12px; pointer-events:none; }
+  .scan-msg { font-size:.82rem; margin-top:10px; min-height:1.4em; }
+  .scan-msg.error { color:#e55; } .scan-msg.ok { color:var(--accent3,#00e5b0); }
+</style>
+</head>
+<body>
+<div class="orb2"></div>
+<header>
+  <div class="logo"><div class="logo-icon">🔐</div>Vault<span>Share</span></div>
+  <div class="badge">AES-256-GCM</div>
+  <button class="theme-toggle" id="theme-toggle-btn" onclick="cycleTheme()" aria-label="Toggle color theme" title="Toggle dark / light / system theme">🖥️ System</button>
+</header>
+
+<div class="share-page-wrap">
+  <div class="card" style="max-width:460px;width:100%;text-align:center;">
+    <div class="share-page-icon">🔳</div>
+    <h2 style="margin-bottom:6px;">Scan a VaultShare QR code</h2>
+    <p style="font-size:.78rem;color:var(--muted);">Point your camera at a QR code made by VaultShare. Only VaultShare links from this server are opened.</p>
+
+    <div class="scan-video-wrap" id="video-wrap" style="display:none;">
+      <video id="scan-video" playsinline muted></video><div class="scan-frame"></div>
+    </div>
+    <canvas id="scan-canvas" style="display:none;"></canvas>
+
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px;">
+      <button class="btn btn-primary" style="width:auto;padding:10px 18px;" id="start-btn" onclick="startScan()">📷 Start Camera</button>
+      <button class="copy-btn" onclick="stopScan()">Stop</button>
+      <label class="copy-btn" style="cursor:pointer;">🖼 Upload QR image<input type="file" id="qr-file" accept="image/*" style="display:none;"/></label>
+    </div>
+    <div class="scan-msg" id="scan-msg" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<footer>VaultShare — All crypto runs in your browser. Open source. Zero telemetry.</footer>
+<script src="js/vendor/jsQR.js"></script>
+<script src="js/scan.js"></script>
+</body>
+</html>
